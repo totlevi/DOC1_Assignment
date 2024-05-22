@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", "Figtree", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  background: #ffffff;
+  font-size: 24px;
+}
+.App {
+  display: flex;
+  text-align: center;
+  height: 100vh;
+  background: #252a2c;
+}
+.App-header{
+  width: 100%;
+  text-align: center;
+}
+h1 {
+  color: #c2e6f3;
+  margin: 50px auto;
+  font-size: 40px;
+}
+.menu1 {
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+h2 {
+  color: #c2e6f3;
+}
+Link{
+  text-decoration: none;
+}
+MenuItem{
+  text-decoration: none;
+}
+.sidebar {
+  background-color: black;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  text-decoration: none;
+  color: black;
+}
