@@ -12,6 +12,8 @@ function Edit() {
     const [currentStory, setCurrentStory] = useState({ id: null, header: '', content: '' });
 
     useEffect(() => {
+        console.log(backendUrl)
+        console.log(`${backendUrl}/stories/`)
         fetch(`${backendUrl}/stories/`)
             .then(data => data.json())
             .then(data => {

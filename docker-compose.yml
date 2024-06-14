@@ -5,7 +5,7 @@ services:
     restart: always
     container_name: doc1_database
     ports:
-      - 5433:5432 
+      - 5433:5432 # Maps external port 5433 to internal port 5432
     volumes:
       - db:/var/lib/postgresql/data
     environment:
@@ -31,14 +31,17 @@ services:
   frontend:
     build:
       context: ./React
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BACKEND_URL: http://localhost:8080
     image: frontend/assignment
     container_name: doc1_frontend
     ports:
       - 3000:3000
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8080
     depends_on:
       - backend
-    environment:
-      - REACT_APP_BACKEND_URL=http://backend:8080
 
 volumes:
   db:
