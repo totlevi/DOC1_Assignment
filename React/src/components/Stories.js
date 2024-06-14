@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import { FaRegTrashAlt } from "react-icons/fa";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import backendUrl from '../config.js';
 
 function Edit() {
     const [stories, setStories] = useState([]);
     const [currentStory, setCurrentStory] = useState({ id: null, header: '', content: '' });
 
     useEffect(() => {
-        fetch("http://localhost:8080/stories/")
+        fetch(`${backendUrl}/stories/`)
             .then(data => data.json())
             .then(data => {
                 setStories(data);
@@ -20,7 +21,7 @@ function Edit() {
     }, []);
 
     const deleteStory = (id) => {
-        fetch(`http://localhost:8080/stories/${id}`, {
+        fetch(`${backendUrl}/stories/${id}`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -34,7 +35,8 @@ function Edit() {
     };
 
     const editStory = () => {
-        fetch(`http://localhost:8080/stories/${currentStory.id}?header=${encodeURIComponent(currentStory.header)}&content=${encodeURIComponent(currentStory.content)}`, {
+        console.log("Editing story:", currentStory);
+        fetch(`${backendUrl}/${currentStory.id}?header=${encodeURIComponent(currentStory.header)}&content=${encodeURIComponent(currentStory.content)}`, {
             method: 'PUT',
         }).then(response => {
             if (response.ok) {

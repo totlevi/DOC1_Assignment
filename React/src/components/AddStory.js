@@ -2,6 +2,7 @@ import '../styles/AddStory.css';
 import { Sidebar, MenuItem, Menu } from 'react-pro-sidebar';
 import { Link } from "react-router-dom";
 import { useState } from 'react';
+import backendUrl from '../config.js';
 
 
 function Add() {
@@ -17,7 +18,7 @@ function Add() {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/stories/", {
+            const response = await fetch(`${backendUrl}/stories/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
