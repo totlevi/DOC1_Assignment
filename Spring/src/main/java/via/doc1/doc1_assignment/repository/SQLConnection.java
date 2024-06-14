@@ -22,11 +22,15 @@ public class SQLConnection implements SQLConnectionInterface {
     }
 
     Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=doc1",
-                "postgres", "password");
+        String dbUrl = System.getenv("SPRING_DATASOURCE_URL");
+        String dbUsername = System.getenv("SPRING_DATASOURCE_USERNAME");
+        String dbPassword = System.getenv("SPRING_DATASOURCE_PASSWORD");
+        return DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
     }
+
     @Override
     public void saveStory(StoryDTO dto) throws Exception {
+        System.out.println("Saving story in SQLconnection");
         try(Connection connection = getConnection()){
             try(PreparedStatement statement = connection.prepareStatement("INSERT INTO story(id, header, content, date)"
                                                                                     + "VALUES (?,?,?,?)")){
@@ -37,6 +41,7 @@ public class SQLConnection implements SQLConnectionInterface {
                 statement.executeUpdate();
             }catch (SQLException e)
             {
+                System.out.println("Error in SQLConnection: "+e.getMessage());
                 throw new Exception(e.getMessage());
             }
         }catch (Exception e)
@@ -116,10 +121,11 @@ public class SQLConnection implements SQLConnectionInterface {
     @Override
     public void editStory(StoryDTO dto) throws Exception {
         try(Connection connection = getConnection()){
-            try(PreparedStatement statement = connection.prepareStatement("UPDATE story SET header=?, content=?, date=?")){
+            try(PreparedStatement statement = connection.prepareStatement("UPDATE story SET header=?, content=?, date=? WHERE id=?")){
                 statement.setString(1,dto.getHeader());
                 statement.setString(2,dto.getContent());
                 statement.setTimestamp(3,dto.getDate());
+                statement.setString(4,dto.getId());
                 statement.executeUpdate();
             }catch (SQLException e)
             {

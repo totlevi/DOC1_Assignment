@@ -20,6 +20,7 @@ public class StoryController {
     @PostMapping("/stories/")
     public synchronized ResponseEntity<String> postNewStory(@RequestBody StoryCreationDTO dto) {
         try {
+            System.out.println("Request received");
             logic.saveStory(dto.getHeader(), dto.getContent());
             return ResponseEntity.ok("Story has been posted");
         } catch (Exception e) {

@@ -23,7 +23,9 @@ public class StoryLogic implements StoryLogicInterface {
         Timestamp timestamp = Timestamp.valueOf(now);
         String id = "STORY-"+ UUID.randomUUID().toString();
         StoryDTO dto = new StoryDTO(id,header,content,timestamp);
+        System.out.println("Passed request to SQLConnection");
         connection.saveStory(dto);
+        
     }
 
     @Override
