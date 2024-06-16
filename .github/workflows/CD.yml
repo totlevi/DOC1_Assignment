@@ -1,0 +1,76 @@
+name: CD Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  start-minikube:
+    name: Start Minikube
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Minikube
+        run : |
+          start minikube --driver=docker
+          eval $(minikube -p minikube docker-env)
+  deploy-backend:
+    name: CD Pipeline - Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK 18
+        uses: actions/setuo-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '18'  
+      - name: Build Docker Image
+        run : |
+          cd Spring
+          docker build -t backend/assignment .
+          echo "Verifying images: "
+          docker images
+      - name: Deploy to Minikube
+        run : |
+          docker image save -o backend.tar backend/assignment
+          minikube image load backend.tar
+          cd k8s-configs
+          kubectl apply -f backend-service.yaml
+          kubectl apply -f backend-deployment.yaml
+      - name: Test pods
+        run : |
+          kubectl get pods
+      - name: Test service
+        run : |
+          kubectl get services
+  deploy-frontend:
+    name: CD Pipeline - Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Build Docker Image
+        run : |
+          cd React
+          docker build -t frontend/assignment .
+          echo "Verifying images: "
+          docker images
+      - name: Deploy to Minikube
+        run : |
+          docker image save -o frontend.tar frontend/assignment
+          minikube image load frontend.tar
+          cd k8s-configs
+          kubectl apply -f frontend-service.yaml
+          kubectl apply -f frontend-deployment.yaml
+      - name: Test pods
+        run : |
+          kubectl get pods
+      - name: Test service
+        run : |
+          kubectl get services
+
+      
