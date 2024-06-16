@@ -52,6 +52,8 @@ jobs:
           path: Spring/target/
       - name: Build Docker Image
         run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
           cd Spring
           docker build -t backend/assignment .
           echo "Verifying images: "
@@ -61,7 +63,6 @@ jobs:
           docker image save -o backend.tar backend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          eval $(minikube -p minikube docker-env)
           minikube image load backend.tar
       - name: Deploy to Minikube
         run: |
@@ -87,6 +88,8 @@ jobs:
           node-version: '16'
       - name: Build Docker Image
         run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
           cd React
           docker build -t frontend/assignment .
           echo "Verifying images: "
@@ -96,7 +99,6 @@ jobs:
           docker image save -o frontend.tar frontend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          eval $(minikube -p minikube docker-env)
           minikube image load frontend.tar
       - name: Deploy to Minikube
         run: |
