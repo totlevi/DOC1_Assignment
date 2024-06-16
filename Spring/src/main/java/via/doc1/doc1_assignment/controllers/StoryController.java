@@ -8,7 +8,8 @@ import via.doc1.doc1_assignment.DTOs.StoryDTO;
 import via.doc1.doc1_assignment.logic.interfaces.StoryLogicInterface;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000")
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class StoryController {
     private final StoryLogicInterface logic;
@@ -17,7 +18,7 @@ public class StoryController {
         this.logic = logic;
     }
 
-    @PostMapping("/stories/")
+    @PostMapping("/stories")
     public synchronized ResponseEntity<String> postNewStory(@RequestBody StoryCreationDTO dto) {
         try {
             System.out.println("Request received");
@@ -59,10 +60,5 @@ public class StoryController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }

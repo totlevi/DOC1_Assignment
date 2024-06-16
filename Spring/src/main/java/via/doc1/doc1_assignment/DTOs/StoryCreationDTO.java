@@ -1,10 +1,16 @@
 package via.doc1.doc1_assignment.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class StoryCreationDTO {
     String header;
     String content;
 
-    public StoryCreationDTO(String header, String content) {
+    @JsonCreator
+    public StoryCreationDTO(
+            @JsonProperty("header") String header,
+            @JsonProperty("content") String content) {
         this.header = header;
         this.content = content;
     }
