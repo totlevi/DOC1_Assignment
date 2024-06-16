@@ -1,3 +1,4 @@
+import React from 'react';
 import '../styles/AddStory.css';
 import { Sidebar, MenuItem, Menu } from 'react-pro-sidebar';
 import { Link } from "react-router-dom";

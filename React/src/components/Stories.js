@@ -1,7 +1,7 @@
 import '../styles/Stories.css';
 import { Sidebar, MenuItem, Menu } from 'react-pro-sidebar';
 import { Link } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, React } from 'react';
 import { FaRegTrashAlt } from "react-icons/fa";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
