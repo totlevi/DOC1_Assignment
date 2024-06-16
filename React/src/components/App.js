@@ -1,7 +1,7 @@
 
 import '../styles/App.css';
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { Link, Outlet } from "react-router-dom"
+import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
+import { Link } from "react-router-dom"
 
 function App() {
   return (
