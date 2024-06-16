@@ -13,25 +13,23 @@ jobs:
     name: Start Minikube
     runs-on: ubuntu-latest
     outputs:
-      kubeconfig: ${{ steps.start-minikube.outputs.kubeconfig }}
+      kubeconfig: ${{ steps.setup-minikube.outputs.kubeconfig }}
     steps:
       - name: Set up Minikube
-        id: start-minikube
+        id: setup-minikube
         uses: medyagh/setup-minikube@latest
       - name: Start Minikube
         run: |
           minikube start --driver=docker
           minikube status
-      - name: Configure kubectl
+      - name: Set Docker env to Minikube
         run: |
-          kubectl config use-context minikube
-      - name: Save Kubeconfig
-        id: save-kubeconfig
-        run: echo "::set-output name=kubeconfig::$(cat ~/.kube/config | base64)"
+          eval $(minikube -p minikube docker-env)
 
   build-backend:
     name: Build Backend JAR
     runs-on: ubuntu-latest
+    needs: start-minikube
     steps:
       - uses: actions/checkout@v4
       - name: Setup JDK 18
@@ -60,16 +58,20 @@ jobs:
         with:
           name: backend-jar
           path: Spring/target/
+      - name: Set Docker env to Minikube
+        run: |
+          eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
           cd Spring
           docker build -t backend/assignment .
           echo "Verifying images: "
           docker images
+      - name: Load Docker Image into Minikube
+        run: |
+          minikube image load backend/assignment
       - name: Deploy to Minikube
         run: |
-          docker save backend/assignment -o backend.tar
-          minikube image load backend.tar
           cd k8s-configs
           kubectl apply -f backend-service.yaml
           kubectl apply -f backend-deployment.yaml
@@ -90,16 +92,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - name: Set Docker env to Minikube
+        run: |
+          eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
           cd React
           docker build -t frontend/assignment .
           echo "Verifying images: "
           docker images
+      - name: Load Docker Image into Minikube
+        run: |
+          minikube image load frontend/assignment
       - name: Deploy to Minikube
         run: |
-          docker save frontend/assignment -o frontend.tar
-          minikube image load frontend.tar
           cd k8s-configs
           kubectl apply -f frontend-service.yaml
           kubectl apply -f frontend-deployment.yaml
