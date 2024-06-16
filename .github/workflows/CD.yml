@@ -25,6 +25,9 @@ jobs:
       - name: Set Docker env to Minikube
         run: |
           eval $(minikube -p minikube docker-env)
+      - name: Save Kubeconfig
+        id: save-kubeconfig
+        run: echo "::set-output name=kubeconfig::$(cat ~/.kube/config | base64)"
 
   build-backend:
     name: Build Backend JAR
@@ -60,6 +63,7 @@ jobs:
           path: Spring/target/
       - name: Set Docker env to Minikube
         run: |
+          minikube status
           eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
@@ -94,6 +98,7 @@ jobs:
           node-version: '16'
       - name: Set Docker env to Minikube
         run: |
+          minikube status
           eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
