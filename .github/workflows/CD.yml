@@ -1,4 +1,5 @@
 name: CD Pipeline
+
 on:
   push:
     branches:
@@ -6,26 +7,16 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   start-minikube:
     name: Start Minikube
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Minikube and kubectl
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y apt-transport-https
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-          echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-          sudo apt-get update -y
-          sudo apt-get install -y kubectl
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          chmod +x minikube
-          sudo mv minikube /usr/local/bin/
-      - name: Deploy to Minikube
-        run: |
-          minikube start --driver=docker
-          eval $(minikube -p minikube docker-env)
+      - name: Set up Minikube
+        id: minikube
+        uses: medyagh/setup-minikube@latest
+
   deploy-backend:
     name: CD Pipeline - Backend
     runs-on: ubuntu-latest
@@ -86,5 +77,3 @@ jobs:
       - name: Test service
         run: |
           kubectl get services
-
-      
