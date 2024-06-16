@@ -12,27 +12,11 @@ jobs:
   start-minikube:
     name: Start Minikube
     runs-on: ubuntu-latest
-    outputs:
-      kubeconfig: ${{ steps.save-kubeconfig.outputs.kubeconfig }}
     steps:
-      - name: Set up Minikube
-        id: setup-minikube
-        uses: medyagh/setup-minikube@latest
+      - uses: actions/checkout@v4
       - name: Start Minikube
-        id: start-minikube
-        run: |
-          minikube start --driver=docker
-          minikube profile list
-          minikube status
-      - name: Verify Minikube Status
-        run: |
-          minikube status
-      - name: Set Docker env to Minikube
-        run: |
-          eval $(minikube -p minikube docker-env)
-      - name: Save Kubeconfig
-        id: save-kubeconfig
-        run: echo "::set-output name=kubeconfig::$(cat ~/.kube/config | base64)"
+        id: minikube
+        uses: medyagh/setup-minikube@latest
 
   build-backend:
     name: Build Backend JAR
@@ -72,12 +56,13 @@ jobs:
           docker build -t backend/assignment .
           echo "Verifying images: "
           docker images
-      - name: Verify Minikube Status
+      - name: Tar file creation
         run: |
-          minikube status
+          docker image save -o backend.tar backend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          minikube image load backend/assignment
+          eval $(minikube -p minikube docker-env)
+          minikube image load backend.tar
       - name: Deploy to Minikube
         run: |
           cd k8s-configs
@@ -106,12 +91,13 @@ jobs:
           docker build -t frontend/assignment .
           echo "Verifying images: "
           docker images
-      - name: Verify Minikube Status
+      - name: Tar file creation
         run: |
-          minikube status
+          docker image save -o frontend.tar frontend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          minikube image load frontend/assignment
+          eval $(minikube -p minikube docker-env)
+          minikube image load frontend.tar
       - name: Deploy to Minikube
         run: |
           cd k8s-configs
