@@ -7,12 +7,18 @@ function App() {
   return (
     <div className="App">
       <Sidebar className="sidebar" backgroundColor='black'>
-        <Menu>
-          <Link to="/"><MenuItem> Home </MenuItem></Link>
-          <Link to="/add"><MenuItem> Add Story </MenuItem></Link>
-          <Link to="/stories"><MenuItem> Stories </MenuItem></Link>
-        </Menu>
-      </Sidebar>
+                <Menu>
+                    <MenuItem>
+                        <Link to="/">Home</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/add">Add Story</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/stories">Stories</Link>
+                    </MenuItem>
+                </Menu>
+            </Sidebar>
       <header className="App-header">
         <h1>Welcome to VIA tabloid app</h1>
       </header>

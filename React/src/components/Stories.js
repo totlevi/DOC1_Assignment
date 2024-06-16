@@ -38,7 +38,7 @@ function Edit() {
 
     const editStory = () => {
         console.log("Editing story:", currentStory);
-        fetch(`${backendUrl}/${currentStory.id}?header=${encodeURIComponent(currentStory.header)}&content=${encodeURIComponent(currentStory.content)}`, {
+        fetch(`${backendUrl}/stories/${currentStory.id}?header=${encodeURIComponent(currentStory.header)}&content=${encodeURIComponent(currentStory.content)}`, {
             method: 'PUT',
         }).then(response => {
             if (response.ok) {
@@ -54,9 +54,15 @@ function Edit() {
         <div className='app'>
             <Sidebar className="sidebar" backgroundColor='black'>
                 <Menu>
-                    <Link to="/"><MenuItem to="/"> Home </MenuItem></Link>
-                    <Link to="/add"><MenuItem > Add Story </MenuItem></Link>
-                    <Link to="/stories"><MenuItem > Stories </MenuItem></Link>
+                    <MenuItem>
+                        <Link to="/">Home</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/add">Add Story</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/stories">Stories</Link>
+                    </MenuItem>
                 </Menu>
             </Sidebar>
             <div className='content'>

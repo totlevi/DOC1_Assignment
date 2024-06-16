@@ -16,9 +16,10 @@ function Add() {
             header: header,
             content: content,
         };
+        console.log(story);
 
         try {
-            const response = await fetch(`${backendUrl}/stories/`, {
+            const response = await fetch(`${backendUrl}/stories`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -42,9 +43,15 @@ function Add() {
         <div className="app">
             <Sidebar className="sidebar" backgroundColor='black'>
                 <Menu>
-                    <Link to="/"><MenuItem> Home </MenuItem></Link>
-                    <Link to="/add"><MenuItem> Add Story </MenuItem></Link>
-                    <Link to="/stories"><MenuItem> Stories </MenuItem></Link>
+                    <MenuItem>
+                        <Link to="/">Home</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/add">Add Story</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/stories">Stories</Link>
+                    </MenuItem>
                 </Menu>
             </Sidebar>
             <div className="content">
