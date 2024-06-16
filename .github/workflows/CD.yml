@@ -12,15 +12,26 @@ jobs:
   start-minikube:
     name: Start Minikube
     runs-on: ubuntu-latest
+    outputs:
+      kubeconfig: ${{ steps.start-minikube.outputs.kubeconfig }}
     steps:
       - name: Set up Minikube
-        id: minikube
+        id: start-minikube
         uses: medyagh/setup-minikube@latest
+      - name: Start Minikube
+        run: |
+          minikube start --driver=docker
+          minikube status
+      - name: Configure kubectl
+        run: |
+          kubectl config use-context minikube
+      - name: Save Kubeconfig
+        id: save-kubeconfig
+        run: echo "::set-output name=kubeconfig::$(cat ~/.kube/config | base64)"
 
-  deploy-backend:
-    name: CD Pipeline - Backend
+  build-backend:
+    name: Build Backend JAR
     runs-on: ubuntu-latest
-    needs: start-minikube
     steps:
       - uses: actions/checkout@v4
       - name: Setup JDK 18
@@ -28,6 +39,27 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '18'
+      - name: Build JAR
+        run: |
+          cd Spring
+          ./mvnw clean install
+      - name: Upload JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-jar
+          path: Spring/target/*.jar
+
+  deploy-backend:
+    name: CD Pipeline - Backend
+    runs-on: ubuntu-latest
+    needs: [start-minikube, build-backend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download JAR
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-jar
+          path: Spring/target/
       - name: Build Docker Image
         run: |
           cd Spring
@@ -36,7 +68,7 @@ jobs:
           docker images
       - name: Deploy to Minikube
         run: |
-          docker image save -o backend.tar backend/assignment
+          docker save backend/assignment -o backend.tar
           minikube image load backend.tar
           cd k8s-configs
           kubectl apply -f backend-service.yaml
@@ -66,7 +98,7 @@ jobs:
           docker images
       - name: Deploy to Minikube
         run: |
-          docker image save -o frontend.tar frontend/assignment
+          docker save frontend/assignment -o frontend.tar
           minikube image load frontend.tar
           cd k8s-configs
           kubectl apply -f frontend-service.yaml
