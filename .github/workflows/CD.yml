@@ -24,6 +24,9 @@ jobs:
           minikube start --driver=docker
           minikube profile list
           minikube status
+      - name: Verify Minikube Status
+        run: |
+          minikube status
       - name: Set Docker env to Minikube
         run: |
           eval $(minikube -p minikube docker-env)
@@ -69,6 +72,9 @@ jobs:
           docker build -t backend/assignment .
           echo "Verifying images: "
           docker images
+      - name: Verify Minikube Status
+        run: |
+          minikube status
       - name: Load Docker Image into Minikube
         run: |
           minikube image load backend/assignment
@@ -100,6 +106,9 @@ jobs:
           docker build -t frontend/assignment .
           echo "Verifying images: "
           docker images
+      - name: Verify Minikube Status
+        run: |
+          minikube status
       - name: Load Docker Image into Minikube
         run: |
           minikube image load frontend/assignment
