@@ -17,6 +17,9 @@ jobs:
       - name: Start Minikube
         id: minikube
         uses: medyagh/setup-minikube@latest
+        with:
+          minikube-profile: cicd-profile  # Ensure consistent profile name
+          wait: true  # Ensure Minikube is ready
 
   build-backend:
     name: Build Backend JAR
@@ -50,6 +53,10 @@ jobs:
         with:
           name: backend-jar
           path: Spring/target/
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
+        with:
+          minikube-profile: cicd-profile  # Ensure consistent profile name
       - name: Build Docker Image
         run: |
           cd Spring
@@ -61,7 +68,7 @@ jobs:
           docker image save -o backend.tar backend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          minikube image load backend.tar
+          minikube image load backend.tar --profile=cicd-profile
       - name: Deploy to Minikube
         run: |
           cd k8s-configs
@@ -80,6 +87,10 @@ jobs:
     needs: start-minikube
     steps:
       - uses: actions/checkout@v4
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
+        with:
+          minikube-profile: cicd-profile  # Ensure consistent profile name
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -95,7 +106,7 @@ jobs:
           docker image save -o frontend.tar frontend/assignment
       - name: Load Docker Image into Minikube
         run: |
-          minikube image load frontend.tar
+          minikube image load frontend.tar --profile=cicd-profile
       - name: Deploy to Minikube
         run: |
           cd k8s-configs
