@@ -13,14 +13,16 @@ jobs:
     name: Start Minikube
     runs-on: ubuntu-latest
     outputs:
-      kubeconfig: ${{ steps.setup-minikube.outputs.kubeconfig }}
+      kubeconfig: ${{ steps.save-kubeconfig.outputs.kubeconfig }}
     steps:
       - name: Set up Minikube
         id: setup-minikube
         uses: medyagh/setup-minikube@latest
       - name: Start Minikube
+        id: start-minikube
         run: |
           minikube start --driver=docker
+          minikube profile list
           minikube status
       - name: Set Docker env to Minikube
         run: |
@@ -63,6 +65,7 @@ jobs:
           path: Spring/target/
       - name: Set Docker env to Minikube
         run: |
+          minikube profile list
           minikube status
           eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
@@ -98,6 +101,7 @@ jobs:
           node-version: '16'
       - name: Set Docker env to Minikube
         run: |
+          minikube profile list
           minikube status
           eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
