@@ -63,11 +63,6 @@ jobs:
         with:
           name: backend-jar
           path: Spring/target/
-      - name: Set Docker env to Minikube
-        run: |
-          minikube profile list
-          minikube status
-          eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
           cd Spring
@@ -99,11 +94,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Set Docker env to Minikube
-        run: |
-          minikube profile list
-          minikube status
-          eval $(minikube -p minikube docker-env)
       - name: Build Docker Image
         run: |
           cd React
