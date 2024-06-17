@@ -1,21 +1,12 @@
-# First stage: Build the Java application
-FROM maven:3.8.6-openjdk-19 as builder
-# Set the working directory
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
+RUN mkdir -p /app
 WORKDIR /app
-# Copy the pom.xml and source code
-COPY pom.xml .
-COPY src ./src
-# Build the project
-RUN mvn clean package
-# Second stage: Create the final runtime image
-FROM alpine:3.19
-# Install necessary packages
-RUN apk update && apk add --no-cache openjdk19-jre
-# Expose port 8080
+COPY pom.xml /app
+COPY src /app/src
+RUN mvn -B package --file pom.xml -DskipTests
+
+FROM eclipse-temurin:21-jdk-alpine
 EXPOSE 8080
-# Set a docker volume if you want
 VOLUME /assignment_volume
-# Copy the built jar file from the builder stage
-COPY --from=builder /app/target/DOC1_ASSIGNMENT-0.0.1-SNAPSHOT.jar DOC1_ASSIGNMENT-0.0.1-SNAPSHOT.jar
-# Start the application
-ENTRYPOINT ["java", "-jar", "/DOC1_ASSIGNMENT-0.0.1-SNAPSHOT.jar"]
+COPY --from=build /app/target/DOC1_ASSIGNMENT-1.0-SNAPSHOT.jar DOC1_ASSIGNMENT-1.0-SNAPSHOT.jar
+ENTRYPOINT ["java", "-jar", "DOC1_ASSIGNMENT-1.0-SNAPSHOT.jar"]
