@@ -20,7 +20,7 @@ spec:
         - containerPort: 3000
         env:
         - name: REACT_APP_BACKEND_URL
-          value: "http://doc1-backend:8080"
+          value: " http://127.0.0.1:58919"
 
 ---
 apiVersion: v1
