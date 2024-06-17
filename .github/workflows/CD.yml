@@ -21,17 +21,17 @@ jobs:
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
           cd Spring
-          docker build -t backend/assignment .
+          docker build -t backend .
           cd ../React
-          docker build -t frontend/assignment .
+          docker build -t frontend .
           echo -n "verifying images:"
           docker images        
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Push backend image to Docker Hub
-        run: docker tag backend/assignment your-dockerhub-username/backend-assignment && docker push your-dockerhub-username/backend-assignment
+        run: docker tag backend agostonbabicz/backend && docker push agostonbabicz/backend
       - name: Push frontend image to Docker Hub
-        run: docker tag frontend/assignment your-dockerhub-username/frontend-assignment && docker push your-dockerhub-username/frontend-assignment
+        run: docker tag frontend agostonbabicz/frontend && docker push agostonbabicz/frontend
       - name: Deploy to minikube
         run: |
           cd deployments
