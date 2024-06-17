@@ -28,6 +28,7 @@ kind: Service
 metadata:
   name: doc1-frontend
 spec:
+  type: NodePort
   ports:
     - port: 3000
       targetPort: 3000
