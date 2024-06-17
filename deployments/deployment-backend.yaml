@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: doc1-backend
-        image: backend
-        imagePullPolicy: Never
+        image: agostonbabicz/backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:

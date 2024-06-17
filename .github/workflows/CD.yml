@@ -57,35 +57,22 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Start Minikube
-        uses: medyagh/setup-minikube@latest
+      uses: medyagh/setup-minikube@latest
 
-      - name: Verify cluster
-        run: kubectl get pods -A
+    - name: Verify cluster
+      run: kubectl get pods -A
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Pull backend image from Docker Hub
-        run: docker pull agostonbabicz/backend:latest
-
-      - name: Pull frontend image from Docker Hub
-        run: docker pull agostonbabicz/frontend:latest
-
-      - name: Tag images for Minikube
-        run: |
-          eval $(minikube -p minikube docker-env)
-          docker tag agostonbabicz/backend:latest backend
-          docker tag agostonbabicz/frontend:latest frontend
-          docker images
-      
-      - name: Deploy to Minikube
-        run: |
-          cd deployments
-          kubectl apply -f deployment-backend.yaml
-          kubectl apply -f deployment-frontend.yaml
-      
-      - name: Test service URLs
-        run: minikube service list
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Deploy to Minikube
+      run: |
+        cd deployments
+        kubectl apply -f deployment-backend.yaml
+        kubectl apply -f deployment-frontend.yaml
+    
+    - name: Test service URLs
+      run: minikube service list
