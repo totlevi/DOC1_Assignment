@@ -1,5 +1,4 @@
-name: CD Pipeline
-
+name: CD - Pipeline
 on:
   push:
     branches:
@@ -7,114 +6,36 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
-  start-minikube:
-    name: Start Minikube
+  setup-minikube:
     runs-on: ubuntu-latest
+    name: setup minikube
     steps:
       - uses: actions/checkout@v4
-      - name: Start Minikube
-        id: minikube
-        uses: medyagh/setup-minikube@latest
-        with:
-          minikube-profile: cicd-profile  # Ensure consistent profile name
-          wait: true  # Ensure Minikube is ready
-
-  build-backend:
-    name: Build Backend JAR
+      - name: Start minikube
+        uses: medyagh/setup-minikube@master
+      - name: Try the cluster !
+        run: kubectl get pods -A
+  deploy:
+    needs: setup-minikube
     runs-on: ubuntu-latest
-    needs: start-minikube
+    name: Build image and deploy to minikube
     steps:
       - uses: actions/checkout@v4
-      - name: Setup JDK 18
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: '18'
-      - name: Build JAR
-        run: |
-          cd Spring
-          ./mvnw clean install
-      - name: Upload JAR
-        uses: actions/upload-artifact@v3
-        with:
-          name: backend-jar
-          path: Spring/target/*.jar
-
-  deploy-backend:
-    name: CD Pipeline - Backend
-    runs-on: ubuntu-latest
-    needs: [start-minikube, build-backend]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download JAR
-        uses: actions/download-artifact@v3
-        with:
-          name: backend-jar
-          path: Spring/target/
-      - name: Start Minikube
-        uses: medyagh/setup-minikube@latest
-        with:
-          minikube-profile: cicd-profile  # Ensure consistent profile name
-      - name: Build Docker Image
-        run: |
-          cd Spring
-          docker build -t backend/assignment .
-          echo "Verifying images: "
-          docker images
-      - name: Tar file creation
-        run: |
-          docker image save -o backend.tar backend/assignment
-      - name: Load Docker Image into Minikube
-        run: |
-          minikube image load backend.tar --profile=cicd-profile
-      - name: Deploy to Minikube
-        run: |
-          cd k8s-configs
-          kubectl apply -f backend-service.yaml
-          kubectl apply -f backend-deployment.yaml
-      - name: Test pods
-        run: |
-          kubectl get pods
-      - name: Test service
-        run: |
-          kubectl get services
-
-  deploy-frontend:
-    name: CD Pipeline - Frontend
-    runs-on: ubuntu-latest
-    needs: start-minikube
-    steps:
-      - uses: actions/checkout@v4
-      - name: Start Minikube
-        uses: medyagh/setup-minikube@latest
-        with:
-          minikube-profile: cicd-profile  # Ensure consistent profile name
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - name: Build Docker Image
-        run: |
-          cd React
-          docker build -t frontend/assignment .
-          echo "Verifying images: "
-          docker images
-      - name: Tar file creation
-        run: |
-          docker image save -o frontend.tar frontend/assignment
-      - name: Load Docker Image into Minikube
-        run: |
-          minikube image load frontend.tar --profile=cicd-profile
-      - name: Deploy to Minikube
-        run: |
-          cd k8s-configs
-          kubectl apply -f frontend-service.yaml
-          kubectl apply -f frontend-deployment.yaml
-      - name: Test pods
-        run: |
-          kubectl get pods
-      - name: Test service
-        run: |
-          kubectl get services
+      - name: Build images
+      run: |
+        export SHELL=/bin/bash
+        eval $(minikube -p minikube docker-env)
+        cd Spring
+        docker build -t backend/assignment .
+        cd ../React
+        docker build -t frontend/assignment .
+        echo -n "verifying images:"
+        docker images        
+    - name: Deploy to minikube
+      run: |
+        kubectl apply -f deployment-backend.yaml
+        kubectl apply -f deployment-frontend.yaml
+    - name: Test service URLs
+      run: |
+        minikube service list

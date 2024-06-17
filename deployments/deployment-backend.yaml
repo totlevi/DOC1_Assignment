@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc1-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doc1-backend
+  template:
+    metadata:
+      labels:
+        app: doc1-backend
+    spec:
+      containers:
+      - name: doc1-backend
+        image: backend/assignment
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://doc1-database:5432/doc-db?currentSchema=doc1"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "password"
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "update"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc1-backend
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: doc1-backend
