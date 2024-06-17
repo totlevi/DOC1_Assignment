@@ -18,7 +18,7 @@ function Add() {
             content: content,
         };
         console.log(story);
-
+        console.log(backendUrl)
         try {
             const response = await fetch(`${backendUrl}/stories`, {
                 method: "POST",
