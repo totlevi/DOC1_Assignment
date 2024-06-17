@@ -34,12 +34,3 @@ jobs:
       - name: Test service URLs
         run: |
           minikube service list
-      - name: Get Minikube Service URL
-        id: get-url
-        run: |
-          URL=$(minikube service doc1-frontend --url)
-          echo "Minikube service URL: $URL"
-          echo "::set-output name=url::$URL"
-
-      - name: Print Minikube Service URL
-        run: echo "Access the service at ${{ steps.get-url.outputs.url }}"
