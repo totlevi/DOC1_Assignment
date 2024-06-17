@@ -10,4 +10,5 @@ public interface SQLConnectionInterface {
     List<StoryDTO> getStories() throws Exception;
     StoryDTO getStory(String id);
     void editStory(StoryDTO dto) throws Exception;
+    
 }
