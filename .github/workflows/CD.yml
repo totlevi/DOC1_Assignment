@@ -9,31 +9,14 @@ on:
       - main
 
 jobs:
-  setup-minikube:
+  push-to-docker-hub:
     runs-on: ubuntu-latest
-    name: Build images and deploy to Minikube
+    name: Push images to Docker Hub
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Start Minikube
-        uses: medyagh/setup-minikube@latest
 
-      - name: Verify cluster
-        run: kubectl get pods -A
-      
-      - name: Build images
-        run: |
-          export SHELL=/bin/bash
-          eval $(minikube -p minikube docker-env)
-          cd Spring
-          docker build -t backend .
-          cd ../React
-          docker build -t frontend .
-          echo -n "Verifying images:"
-          docker images
-      
       - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@vf4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -46,7 +29,7 @@ jobs:
             agostonbabicz/backend
             agostonbabicz/frontend
 
-      - name: Push backend image to Docker Hub
+      - name: Build and push backend image
         id: push_backend
         uses: docker/build-push-action@v4
         with:
@@ -56,7 +39,7 @@ jobs:
           tags: agostonbabicz/backend:latest, agostonbabicz/backend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
       
-      - name: Push frontend image to Docker Hub
+      - name: Build and push frontend image
         id: push_frontend
         uses: docker/build-push-action@v4
         with:
@@ -66,6 +49,38 @@ jobs:
           tags: agostonbabicz/frontend:latest, agostonbabicz/frontend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  deploy-to-minikube:
+    runs-on: ubuntu-latest
+    name: Deploy to Minikube
+    needs: push-to-docker-hub
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
+
+      - name: Verify cluster
+        run: kubectl get pods -A
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@vf4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Pull backend image from Docker Hub
+        run: docker pull agostonbabicz/backend:latest
+
+      - name: Pull frontend image from Docker Hub
+        run: docker pull agostonbabicz/frontend:latest
+
+      - name: Tag images for Minikube
+        run: |
+          eval $(minikube -p minikube docker-env)
+          docker tag agostonbabicz/backend:latest backend
+          docker tag agostonbabicz/frontend:latest frontend
+          docker images
+      
       - name: Deploy to Minikube
         run: |
           cd deployments
