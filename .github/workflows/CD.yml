@@ -16,6 +16,15 @@ jobs:
         uses: medyagh/setup-minikube@master
       - name: Try the cluster !
         run: kubectl get pods -A
+      - name: Build Java project
+        run: |
+          cd Spring
+          ./mvnw clean package
+      - name: Verify directories
+        run: |
+          ls -al
+          ls -al Spring/target
+          ls -al React
       - name: Build images
         run: |
           export SHELL=/bin/bash
