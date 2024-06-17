@@ -34,3 +34,6 @@ jobs:
       - name: Test service URLs
         run: |
           minikube service list
+      - name: Start frontend
+        run: |
+          minikube service doc1-frontend
