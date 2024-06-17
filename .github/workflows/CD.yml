@@ -23,15 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build images
-      run: |
-        export SHELL=/bin/bash
-        eval $(minikube -p minikube docker-env)
-        cd Spring
-        docker build -t backend/assignment .
-        cd ../React
-        docker build -t frontend/assignment .
-        echo -n "verifying images:"
-        docker images        
+        run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
+          cd Spring
+          docker build -t backend/assignment .
+          cd ../React
+          docker build -t frontend/assignment .
+          echo -n "verifying images:"
+          docker images        
       - name: Deploy to minikube
         run: |
           kubectl apply -f deployment-backend.yaml
