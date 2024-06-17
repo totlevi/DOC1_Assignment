@@ -54,7 +54,7 @@ jobs:
     name: Deploy to Minikube
     needs: push-to-docker-hub
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@vf4ef78c080cd8ba55a85445d5b36e214a81df20a
       
       - name: Start Minikube
       uses: medyagh/setup-minikube@latest
