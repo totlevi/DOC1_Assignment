@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: doc1-frontend
-        image: agostonbabicz/frontend:latest
+        image: totlevi/frontend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

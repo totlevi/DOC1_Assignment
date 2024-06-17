@@ -26,8 +26,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            agostonbabicz/backend
-            agostonbabicz/frontend
+            totlevi/backend
+            totlevi/frontend
 
       - name: Build and push backend image
         id: push_backend
@@ -36,7 +36,7 @@ jobs:
           context: ./Spring
           file: ./Spring/Dockerfile
           push: true
-          tags: agostonbabicz/backend:latest, agostonbabicz/backend:${{ github.sha }}
+          tags: totlevi/backend:latest, totlevi/backend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
       
       - name: Build and push frontend image
@@ -46,7 +46,7 @@ jobs:
           context: ./React
           file: ./React/Dockerfile
           push: true
-          tags: agostonbabicz/frontend:latest, agostonbabicz/frontend:${{ github.sha }}
+          tags: totlevi/frontend:latest, totlevi/frontend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy-to-minikube:
