@@ -21,6 +21,7 @@ function App() {
             </Sidebar>
       <header className="App-header">
         <h1>Welcome to VIA tabloid app</h1>
+        <p>Click on the sidebar to navigate to different pages</p>
       </header>
     </div>
   );
