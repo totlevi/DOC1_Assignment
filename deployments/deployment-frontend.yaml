@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: doc1-frontend
-        image: frontend/assignment
+        image: frontend
         imagePullPolicy: Never
         ports:
         - containerPort: 3000

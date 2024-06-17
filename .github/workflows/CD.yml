@@ -66,20 +66,6 @@ jobs:
           tags: agostonbabicz/frontend:latest, agostonbabicz/frontend:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Generate artifact attestation for backend
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: agostonbabicz/backend
-          subject-digest: ${{ steps.push_backend.outputs.digest }}
-          push-to-registry: true
-
-      - name: Generate artifact attestation for frontend
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: agostonbabicz/frontend
-          subject-digest: ${{ steps.push_frontend.outputs.digest }}
-          push-to-registry: true
-      
       - name: Deploy to Minikube
         run: |
           cd deployments

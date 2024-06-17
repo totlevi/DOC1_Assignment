@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: doc1-backend
-        image: backend/assignment
+        image: backend
         imagePullPolicy: Never
         ports:
         - containerPort: 8080
