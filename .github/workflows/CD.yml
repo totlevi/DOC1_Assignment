@@ -16,12 +16,6 @@ jobs:
         uses: medyagh/setup-minikube@master
       - name: Try the cluster !
         run: kubectl get pods -A
-  deploy:
-    needs: setup-minikube
-    runs-on: ubuntu-latest
-    name: Build image and deploy to minikube
-    steps:
-      - uses: actions/checkout@v4
       - name: Build images
         run: |
           export SHELL=/bin/bash
